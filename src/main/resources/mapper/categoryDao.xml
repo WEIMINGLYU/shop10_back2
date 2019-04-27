@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ai.shop10_back.dao.ICategoryDao">
+    <resultMap id="allCategoryAndCsgory" type="CategoryExt">
+        <id column="cid" property="cid"></id>
+        <result column="cname" property="cname"></result>
+        <collection property="categorysecondExtList" ofType="CategorysecondExt">
+            <id column="csid" property="csid"></id>
+            <result column="csname" property="csname"></result>
+            <result column="cid" property="cid"></result>
+          <!--  <collection property="productList" ofType="Product">
+                <id column="pid" property="pid"></id>
+                <result property="pname" column="pname"></result>
+                <result property="market_price" column="market_price"></result>
+                <result property="shop_price" column="shop_price"></result>
+                <result property="image" column="image"></result>
+                <result property="pdesc" column="pdesc"></result>
+                <result property="is_hot" column="is_hot"></result>
+                <result property="pdate" column="pdate"></result>
+                <result property="csid" column="csid"></result>
+            </collection>-->
+        </collection>
+    </resultMap>
+    <!--查询所有一二级类目-->
+    <select id="getAllCAndCs"  resultMap="allCategoryAndCsgory">
+ select c.*,cs.*
+ from category c left join categorysecond cs
+ on c.cid = cs.cid
+
+</select>
+    <!--查询一级类目-->
+<select id="findByCategory"  resultType="category">
+  select * from category
+</select>
+
+</mapper>

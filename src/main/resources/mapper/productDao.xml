@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ai.shop10_back.dao.IProductDao">
+    <!--添加商品-->
+    <insert id="addProduct" parameterType="product">
+      insert into product values(default,#{pname},#{market_price},#{shop_price},#{image},#{pdesc},#{is_hot},#{pdate},#{csid});
+    </insert>
+    <select id="findAllProduct" parameterType="com.ai.shop10_back.util.PageBeanForProduct" resultType="product">
+        select p.*
+        from product p inner join categorysecond cs
+        on p.csid = cs.csid
+        inner join  category c
+        on cs.cid = c.cid
+        <where>
+            <if test="cid != null">
+                and c.cid = #{cid}
+            </if>
+            <if test="csid != null">
+                and cs.csid = #{csid}
+            </if>
+            <if test="pname != null and pname != ''">
+                and p.pname like '%${pname}%'
+            </if>
+        </where>
+         order by p.pdate desc,p.pid desc
+        limit #{startLimit},#{pageSize}
+
+    </select>
+
+    <!--查询商品总记录数-->
+    <select id="getProductCount" parameterType="com.ai.shop10_back.util.PageBeanForProduct" resultType="int">
+        select count(*)
+        from product p inner join categorysecond cs
+        on p.csid = cs.csid
+        inner join  category c
+        on cs.cid = c.cid
+        <where>
+            <if test="cid != null">
+                and c.cid = #{cid}
+            </if>
+            <if test="csid != null and csid != 0">
+                and cs.csid = #{csid}
+            </if>
+            <if test="pname != null and pname != ''">
+                and p.pname like '%${pname}%'
+            </if>
+        </where>
+
+    </select>
+    <!--删除商品信息-->
+<delete id="delProduct" parameterType="int">
+    delete from product where pid = #{pid}
+</delete>
+    <!--查询订单中是否有该商品-->
+    <select id="productByOrderitem" parameterType="int" resultType="Integer">
+         select count(*) from orderitem where pid = #{pid}
+    </select>
+    <select id="findImage" resultType="String" parameterType="int">
+        select image from product where pid = #{pid}
+    </select>
+     <!--修改回显查询-->
+    <select id="findProductByPid" parameterType="int" resultType="product">
+        select p.*
+        from product p
+        where pid = #{pid}
+    </select>
+     <!--修改商品信息-->
+    <update id="updateProduct" parameterType="product" >
+         update product set pname = #{pname},market_price = #{market_price},shop_price=#{shop_price},
+         image=#{image},pdesc=#{pdesc},csid=#{csid} where pid = #{pid}
+    </update>
+    <select id="findImageByPid" parameterType="product" resultType="String">
+        select image from product where pid=#{pid}
+    </select>
+</mapper>
